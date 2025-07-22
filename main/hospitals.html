@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Hospitals</title>
+  <link rel="stylesheet" href="style5.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Hospital Finder</h2>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <input type="text" placeholder="Hospital Name">
+      <input type="text" placeholder="District">
+      <input type="text" placeholder="City">
+      <button>Search</button>
+      <button onclick="alert('Showing nearest hospital using your location...')">📍 Nearest Hospital</button>
+    </div>
+
+    <div class="hospital-card">
+      <h3>Dhaka Medical College Hospital</h3>
+      <p><strong>District:</strong> Dhaka</p>
+      <p><strong>City:</strong> Dhaka</p>
+      <p><strong>Available Beds:</strong> 42</p>
+      <button>Book a Bed</button>
+    </div>
+
+    <div class="hospital-card">
+      <h3>Rajshahi Medical College</h3>
+      <p><strong>District:</strong> Rajshahi</p>
+      <p><strong>City:</strong> Rajshahi</p>
+      <p><strong>Available Beds:</strong> 20</p>
+      <button>Book a Bed</button>
+    </div>
+  </div>
+</body>
+</html>
