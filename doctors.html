@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Doctor</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html" class="active">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Find a Doctor</h2>
+    <form id="searchForm" class="search-bar">
+      <input type="text" id="searchName" placeholder="Name">
+      <input type="text" id="searchSpecialty" placeholder="Specialty">
+      <select id="searchGender">
+        <option value="">Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+      <input type="text" id="searchCity" placeholder="City">
+      <button type="submit">Search</button>
+    </form>
+
+    <div id="doctorsList"></div>
+  </div>
+
+  <!-- Appointment Modal -->
+  <div id="appointmentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h3>Book Appointment</h3>
+      <div id="appointmentDetails"></div>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Demo doctor data (replace with localStorage if needed)
+    const doctors = [
+      {
+        name: "Dr. Rahim Uddin",
+        specialty: "Medicine",
+        qualification: "MBBS, FCPS",
+        experience: "12 years",
+        hospital: "Dhaka Medical",
+        location: "Dhaka",
+        gender: "Male",
+        schedule: "Mon-Wed",
+        time: "10am-1pm"
+      },
+      {
+        name: "Dr. Afsana Khatun",
+        specialty: "Pediatrics",
+        qualification: "MBBS, DCH",
+        experience: "8 years",
+        hospital: "Square Hospital",
+        location: "Rajshahi",
+        gender: "Female",
+        schedule: "Tue-Thu",
+        time: "2pm-5pm"
+      },
+      {
+        name: "Dr. Mahmud Hasan",
+        specialty: "Cardiology",
+        qualification: "MBBS, MD",
+        experience: "10 years",
+        hospital: "Apollo Hospital",
+        location: "Chittagong",
+        gender: "Male",
+        schedule: "Sat-Mon",
+        time: "9am-12pm"
+      }
+    ];
+
+    function renderDoctors(list) {
+      const container = document.getElementById('doctorsList');
+      if (!list.length) {
+        container.innerHTML = "<p>No doctors found.</p>";
+        return;
+      }
+      container.innerHTML = list.map((doc, idx) => `
+        <div class="doctor-card">
+          <h3>${doc.name}</h3>
+          <p><strong>Specialty:</strong> ${doc.specialty}</p>
+          <p><strong>Qualification:</strong> ${doc.qualification}</p>
+          <p><strong>Experience:</strong> ${doc.experience}</p>
+          <p><strong>Hospital:</strong> ${doc.hospital}</p>
+          <p><strong>Location:</strong> ${doc.location}</p>
+          <p><strong>Gender:</strong> ${doc.gender}</p>
+          <button onclick="bookAppointment(${idx})">Book Appointment</button>
+        </div>
+      `).join('');
+    }
+
+    function bookAppointment(idx) {
+      // For demo, serial is random
+      const serial = Math.floor(Math.random() * 20) + 1;
+      const doc = doctors[idx];
+      document.getElementById('appointmentDetails').innerHTML = `
+        <p><strong>Doctor:</strong> ${doc.name}</p>
+        <p><strong>Serial Number:</strong> ${serial}</p>
+        <p><strong>Schedule:</strong> ${doc.schedule}</p>
+        <p><strong>Time:</strong> ${doc.time}</p>
+      `;
+      document.getElementById('appointmentModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('appointmentModal').style.display = 'none';
+    }
+    document.getElementById('closeModal').onclick = closeModal;
+    window.onclick = function(event) {
+      const modal = document.getElementById('appointmentModal');
+      if (event.target === modal) closeModal();
+    };
+
+    // Search/filter logic
+    document.getElementById('searchForm').onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('searchName').value.toLowerCase();
+      const specialty = document.getElementById('searchSpecialty').value.toLowerCase();
+      const gender = document.getElementById('searchGender').value;
+      const city = document.getElementById('searchCity').value.toLowerCase();
+      const filtered = doctors.filter(doc =>
+        (name === "" || doc.name.toLowerCase().includes(name)) &&
+        (specialty === "" || doc.specialty.toLowerCase().includes(specialty)) &&
+        (gender === "" || doc.gender === gender) &&
+        (city === "" || doc.location.toLowerCase().includes(city))
+      );
+      renderDoctors(filtered);
+    };
+
+    // Initial render
+    renderDoctors(doctors);
+  </script>
+</body>
+</html>

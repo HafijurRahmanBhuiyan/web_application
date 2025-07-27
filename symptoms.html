@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Symptoms Tracking</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Dengue Symptoms Tracker</h2>
+    <form id="symptomForm" class="profile-form">
+      <label><input type="checkbox" name="symptom" value="Fever"> High Fever</label><br>
+      <label><input type="checkbox" name="symptom" value="Headache"> Severe Headache</label><br>
+      <label><input type="checkbox" name="symptom" value="Pain"> Pain behind the eyes</label><br>
+      <label><input type="checkbox" name="symptom" value="Muscle"> Muscle and joint pain</label><br>
+      <label><input type="checkbox" name="symptom" value="Nausea"> Nausea or vomiting</label><br>
+      <label><input type="checkbox" name="symptom" value="Rash"> Skin rash</label><br>
+      <label><input type="checkbox" name="symptom" value="Bleeding"> Mild bleeding (nose/gums)</label><br>
+      <button type="submit">Check Risk</button>
+    </form>
+    <div id="riskResult" style="margin-top:2rem;"></div>
+  </div>
+
+  <script>
+    document.getElementById('symptomForm').onsubmit = function(e) {
+      e.preventDefault();
+      const checked = Array.from(document.querySelectorAll('input[name="symptom"]:checked'));
+      const count = checked.length;
+      let risk = '';
+      if (count >= 5) {
+        risk = '<span style="color:red;font-weight:bold;">High risk of dengue. Please consult a doctor immediately!</span>';
+      } else if (count >= 3) {
+        risk = '<span style="color:orange;font-weight:bold;">Moderate risk. Monitor your symptoms and consider seeing a doctor.</span>';
+      } else if (count > 0) {
+        risk = '<span style="color:green;font-weight:bold;">Low risk. Stay alert and take precautions.</span>';
+      } else {
+        risk = 'No symptoms selected.';
+      }
+      document.getElementById('riskResult').innerHTML = `<h3>Assessment Result</h3><p>${risk}</p>`;
+    };
+  </script>
+</body>
+</html>

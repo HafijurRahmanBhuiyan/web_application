@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Profile</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html" class="active">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>My Profile</h2>
+    <form id="profileForm" class="profile-form">
+      <input type="text" name="fullname" placeholder="Full Name" required />
+      <input type="number" name="age" placeholder="Age" required />
+      <select name="gender" required>
+        <option value="">Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+      <input type="text" name="nid" placeholder="NID/Birth Certificate No." required />
+      <input type="tel" name="contact" placeholder="Contact Number" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="blood" placeholder="Blood Group" required />
+      <input type="text" name="address" placeholder="Address" required />
+      <button type="submit">Update Profile</button>
+    </form>
+  </div>
+
+  <script>
+    // Load current user data
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const form = document.getElementById('profileForm');
+    if (user && user.role === 'patient') {
+      form.fullname.value = user.fullname || '';
+      form.age.value = user.age || '';
+      form.gender.value = user.gender || '';
+      form.nid.value = user.nid || '';
+      form.contact.value = user.contact || '';
+      form.email.value = user.email || '';
+      form.blood.value = user.blood || '';
+      form.address.value = user.address || '';
+    }
+
+    // Update profile logic
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      const updated = Object.fromEntries(new FormData(form));
+      // Update in patients array
+      let patients = JSON.parse(localStorage.getItem('patients') || '[]');
+      const idx = patients.findIndex(p => p.email === user.email);
+      if (idx !== -1) {
+        patients[idx] = {...patients[idx], ...updated};
+        localStorage.setItem('patients', JSON.stringify(patients));
+        localStorage.setItem('currentUser', JSON.stringify({role: 'patient', ...patients[idx]}));
+        alert('Profile updated!');
+      } else {
+        alert('User not found!');
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prescribed Medicines</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html" class="active">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>My Prescribed Medicines</h2>
+    <div id="medicineList"></div>
+  </div>
+
+  <script>
+    // Demo: Prescriptions stored in localStorage as 'prescriptions'
+    // Each prescription: { patientEmail, doctorName, medicine, dosage, instructions, date }
+    // For real use, doctors would add these via their dashboard
+
+    // Demo data (add if not present)
+    if (!localStorage.getItem('prescriptions')) {
+      localStorage.setItem('prescriptions', JSON.stringify([
+        {
+          patientEmail: "patient1@email.com",
+          doctorName: "Dr. Rahim Uddin",
+          medicine: "Paracetamol",
+          dosage: "500mg",
+          instructions: "Twice daily after meal",
+          date: "2024-06-01"
+        },
+        {
+          patientEmail: "patient1@email.com",
+          doctorName: "Dr. Afsana Khatun",
+          medicine: "ORS",
+          dosage: "As needed",
+          instructions: "After loose motion",
+          date: "2024-06-02"
+        }
+      ]));
+    }
+
+    // Get current user
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
+    const myMeds = prescriptions.filter(p => p.patientEmail === user.email);
+
+    const container = document.getElementById('medicineList');
+    if (myMeds.length === 0) {
+      container.innerHTML = "<p>No medicines prescribed yet.</p>";
+    } else {
+      container.innerHTML = myMeds.map(med => `
+        <div class="doctor-card">
+          <h3>${med.medicine}</h3>
+          <p><strong>Prescribed by:</strong> ${med.doctorName}</p>
+          <p><strong>Dosage:</strong> ${med.dosage}</p>
+          <p><strong>Instructions:</strong> ${med.instructions}</p>
+          <p><strong>Date:</strong> ${med.date}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

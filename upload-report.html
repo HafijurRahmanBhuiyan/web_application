@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Diagnosis Report</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Upload Diagnosis Report</h2>
+    <form id="reportForm" class="profile-form">
+      <input type="text" name="title" placeholder="Report Title" required />
+      <input type="date" name="date" required />
+      <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required />
+      <button type="submit">Upload Report</button>
+    </form>
+    <div id="uploadedReports"></div>
+  </div>
+
+  <script>
+    // Get current user
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    // Load reports from localStorage
+    let reports = JSON.parse(localStorage.getItem('reports') || '[]');
+    // Only show this patient's reports
+    function renderReports() {
+      const myReports = reports.filter(r => r.patientEmail === user.email);
+      const container = document.getElementById('uploadedReports');
+      if (!myReports.length) {
+        container.innerHTML = "<p>No reports uploaded yet.</p>";
+      } else {
+        container.innerHTML = "<h3>My Uploaded Reports</h3>" + myReports.map(r => `
+          <div class="doctor-card">
+            <h4>${r.title}</h4>
+            <p><strong>Date:</strong> ${r.date}</p>
+            <p><strong>File:</strong> <a href="${r.fileUrl}" target="_blank">View</a></p>
+          </div>
+        `).join('');
+      }
+    }
+    renderReports();
+
+    // Handle upload
+    document.getElementById('reportForm').onsubmit = function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const file = form.file.files[0];
+      if (!file) return alert('Please select a file.');
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const newReport = {
+          patientEmail: user.email,
+          title: form.title.value,
+          date: form.date.value,
+          fileUrl: ev.target.result
+        };
+        reports.push(newReport);
+        localStorage.setItem('reports', JSON.stringify(reports));
+        alert('Report uploaded!');
+        renderReports();
+        form.reset();
+      };
+      reader.readAsDataURL(file);
+    };
+  </script>
+</body>
+</html>

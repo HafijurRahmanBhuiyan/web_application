@@ -1,0 +1,81 @@
+body {
+    background: #f7fafd;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .login-box, .form-box {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    width: 350px;
+    max-width: 95vw;
+  }
+  h1 {
+    margin-bottom: 1.5rem;
+    color: #1a73e8;
+    font-size: 2rem;
+    text-align: center;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+    border: 1px solid #dbeafe;
+    font-size: 1rem;
+  }
+  button {
+    background: #1a73e8;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover {
+    background: #155ab6;
+  }
+  .tab-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 0.7rem;
+    background: #e3eafc;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    color: #1a73e8;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: #1a73e8;
+    color: #fff;
+  }
+  .tab-content {
+    display: block;
+  }
+  a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 500px) {
+    .login-box, .form-box {
+      padding: 1rem;
+      width: 98vw;
+    }
+  }

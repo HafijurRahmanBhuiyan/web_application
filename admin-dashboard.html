@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    .summary-cards {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 1.5rem;
+      flex: 1 1 200px;
+      min-width: 180px;
+      text-align: center;
+    }
+    .remove-btn {
+      background: #e53935;
+      color: #fff;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 1rem;
+      transition: background 0.2s;
+    }
+    .remove-btn:hover {
+      background: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="admin-dashboard.html" class="active">🏠 Dashboard</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <div class="content">
+    <h2>Admin Dashboard</h2>
+    <div class="summary-cards">
+      <div class="summary-card">
+        <h3 id="totalPatients">0</h3>
+        <p>Total Patients</p>
+      </div>
+      <div class="summary-card">
+        <h3 id="totalDoctors">0</h3>
+        <p>Total Doctors</p>
+      </div>
+    </div>
+    <h3>All Patients</h3>
+    <div id="patientsList"></div>
+    <h3>All Doctors</h3>
+    <div id="doctorsList"></div>
+  </div>
+
+  <script>
+    // Load users from localStorage
+    let patients = JSON.parse(localStorage.getItem('patients') || '[]');
+    let doctors = JSON.parse(localStorage.getItem('doctors') || '[]');
+
+    // Render summary
+    document.getElementById('totalPatients').textContent = patients.length;
+    document.getElementById('totalDoctors').textContent = doctors.length;
+
+    // Render patients
+    function renderPatients() {
+      const container = document.getElementById('patientsList');
+      if (!patients.length) {
+        container.innerHTML = "<p>No patients registered.</p>";
+        return;
+      }
+      container.innerHTML = patients.map((p, idx) => `
+        <div class="doctor-card">
+          <strong>${p.fullname || "Patient"}</strong> (${p.email})
+          <button class="remove-btn" onclick="removePatient(${idx})">Remove</button>
+        </div>
+      `).join('');
+    }
+    // Render doctors
+    function renderDoctors() {
+      const container = document.getElementById('doctorsList');
+      if (!doctors.length) {
+        container.innerHTML = "<p>No doctors registered.</p>";
+        return;
+      }
+      container.innerHTML = doctors.map((d, idx) => `
+        <div class="doctor-card">
+          <strong>${d.fullname || "Doctor"}</strong> (${d.email})
+          <button class="remove-btn" onclick="removeDoctor(${idx})">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    // Remove patient
+    window.removePatient = function(idx) {
+      if (confirm("Are you sure you want to remove this patient?")) {
+        patients.splice(idx, 1);
+        localStorage.setItem('patients', JSON.stringify(patients));
+        document.getElementById('totalPatients').textContent = patients.length;
+        renderPatients();
+      }
+    };
+    // Remove doctor
+    window.removeDoctor = function(idx) {
+      if (confirm("Are you sure you want to remove this doctor?")) {
+        doctors.splice(idx, 1);
+        localStorage.setItem('doctors', JSON.stringify(doctors));
+        document.getElementById('totalDoctors').textContent = doctors.length;
+        renderDoctors();
+      }
+    };
+
+    // Initial render
+    renderPatients();
+    renderDoctors();
+  </script>
+</body>
+</html>

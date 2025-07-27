@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    .profile-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+    .prescribe-form input, .prescribe-form textarea {
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="doctors.html" class="active">🏠 Dashboard</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Doctor Dashboard</h2>
+    <div id="doctorProfile" class="profile-card"></div>
+    <h3>Patient Appointments</h3>
+    <div id="appointmentsList"></div>
+  </div>
+
+  <!-- Modal for viewing diagnosis reports -->
+  <div id="reportModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeReportModal" class="close">&times;</span>
+      <h3>Diagnosis Reports</h3>
+      <div id="reportDetails"></div>
+      <button onclick="closeReportModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- Modal for prescribing medicine -->
+  <div id="prescribeModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closePrescribeModal" class="close">&times;</span>
+      <h3>Prescribe Medicine</h3>
+      <form id="prescribeForm" class="prescribe-form">
+        <input type="text" name="medicine" placeholder="Medicine Name" required />
+        <input type="text" name="dosage" placeholder="Dosage" required />
+        <textarea name="instructions" placeholder="Instructions" required></textarea>
+        <input type="hidden" name="patientEmail" />
+        <button type="submit">Prescribe</button>
+      </form>
+      <button onclick="closePrescribeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Get current doctor
+    const doctor = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    // Demo: Appointments (in real app, would be created by patients booking)
+    let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+    // Demo: Patients (for info)
+    let patients = JSON.parse(localStorage.getItem('patients') || '[]');
+    // Demo: Reports
+    let reports = JSON.parse(localStorage.getItem('reports') || '[]');
+    // Demo: Prescriptions
+    let prescriptions = JSON.parse(localStorage.getItem('prescriptions') || '[]');
+
+    // For demo, add a sample appointment if none exist
+    if (appointments.length === 0 && patients.length > 0) {
+      appointments = [
+        {
+          patientEmail: patients[0].email,
+          patientName: patients[0].fullname,
+          date: "2024-06-10",
+          time: "10:00 AM",
+          reason: "Fever, headache"
+        }
+      ];
+      localStorage.setItem('appointments', JSON.stringify(appointments));
+    }
+
+    // Render doctor profile
+    function renderProfile() {
+      document.getElementById('doctorProfile').innerHTML = `
+        <h3>${doctor.fullname || "Doctor"}</h3>
+        <p><strong>Specialty:</strong> ${doctor.specialty || ""}</p>
+        <p><strong>Qualification:</strong> ${doctor.qualification || ""}</p>
+        <p><strong>Experience:</strong> ${doctor.experience || ""}</p>
+        <p><strong>Hospital:</strong> ${doctor.hospital || ""}</p>
+        <p><strong>Location:</strong> ${doctor.location || ""}</p>
+        <p><strong>Email:</strong> ${doctor.email || ""}</p>
+      `;
+    }
+
+    // Render appointments
+    function renderAppointments() {
+      const container = document.getElementById('appointmentsList');
+      if (!appointments.length) {
+        container.innerHTML = "<p>No appointments yet.</p>";
+        return;
+      }
+      container.innerHTML = appointments.map((appt, idx) => {
+        const patient = patients.find(p => p.email === appt.patientEmail) || {};
+        return `
+          <div class="doctor-card">
+            <h4>${appt.patientName || patient.fullname || "Patient"}</h4>
+            <p><strong>Date:</strong> ${appt.date}</p>
+            <p><strong>Time:</strong> ${appt.time}</p>
+            <p><strong>Reason:</strong> ${appt.reason || ""}</p>
+            <button onclick="viewReports('${appt.patientEmail}')">View Diagnosis Reports</button>
+            <button onclick="openPrescribeModal('${appt.patientEmail}', '${appt.patientName || patient.fullname || "Patient"}')">Prescribe Medicine</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // View diagnosis reports modal
+    function viewReports(email) {
+      const patientReports = reports.filter(r => r.patientEmail === email);
+      const container = document.getElementById('reportDetails');
+      if (!patientReports.length) {
+        container.innerHTML = "<p>No reports uploaded by this patient.</p>";
+      } else {
+        container.innerHTML = patientReports.map(r => `
+          <div class="doctor-card">
+            <h4>${r.title}</h4>
+            <p><strong>Date:</strong> ${r.date}</p>
+            <p><strong>File:</strong> <a href="${r.fileUrl}" target="_blank">View</a></p>
+          </div>
+        `).join('');
+      }
+      document.getElementById('reportModal').style.display = 'flex';
+    }
+    function closeReportModal() {
+      document.getElementById('reportModal').style.display = 'none';
+    }
+    document.getElementById('closeReportModal').onclick = closeReportModal;
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('reportModal')) closeReportModal();
+      if (event.target === document.getElementById('prescribeModal')) closePrescribeModal();
+    };
+
+    // Prescribe medicine modal
+    function openPrescribeModal(email, name) {
+      const form = document.getElementById('prescribeForm');
+      form.patientEmail.value = email;
+      document.getElementById('prescribeModal').style.display = 'flex';
+    }
+    function closePrescribeModal() {
+      document.getElementById('prescribeModal').style.display = 'none';
+    }
+    document.getElementById('closePrescribeModal').onclick = closePrescribeModal;
+
+    // Handle prescribe form
+    document.getElementById('prescribeForm').onsubmit = function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const newPrescription = {
+        patientEmail: form.patientEmail.value,
+        doctorName: doctor.fullname || "Doctor",
+        medicine: form.medicine.value,
+        dosage: form.dosage.value,
+        instructions: form.instructions.value,
+        date: new Date().toISOString().slice(0,10)
+      };
+      prescriptions.push(newPrescription);
+      localStorage.setItem('prescriptions', JSON.stringify(prescriptions));
+      alert('Medicine prescribed!');
+      closePrescribeModal();
+      form.reset();
+    };
+
+    // Initial render
+    renderProfile();
+    renderAppointments();
+  </script>
+</body>
+</html>

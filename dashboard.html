@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css"/>
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>Dengue Safety</h2>
+    </div>
+    <ul>
+      <li><a href="#" id="homeBtn" class="active">Home</a></li>
+      <li><a href="doctors-list.html" id="findDoctorBtn">Find Doctor</a></li>
+      <li><a href="profile.html" id="profileBtn">Profile</a></li>
+      <li><a href="medicine.html" id="medicineBtn">Medicine</a></li>
+      <li><a href="index.html" id="logoutBtn">Log Out</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="topbar-btn" onclick="window.location.href='hospitals.html'">Find Hospital</button>
+      <button class="topbar-btn" onclick="window.location.href='ambulance.html'">Find Ambulance</button>
+      <button class="topbar-btn" onclick="window.location.href='upload-report.html'">Upload Diagnosis Report</button>
+      <button class="topbar-btn" onclick="window.location.href='symptoms.html'">Symptoms Tracking</button>
+      <button class="topbar-btn" onclick="window.location.href='heatmap.html'">Heatmap</button>
+    </header>
+
+    <!-- Home Dashboard -->
+    <section id="homeSection">
+      <h1>Welcome, <span id="patientName"></span>!</h1>
+      <div class="info-cards">
+        <div class="info-card">
+          <h2>About Dengue Fever</h2>
+          <p>
+            Dengue is a mosquito-borne viral infection causing flu-like illness. Severe dengue can be life-threatening. Early detection and proper care lower fatality rates.
+          </p>
+        </div>
+        <div class="info-card">
+          <h2>Prevention Tips</h2>
+          <ul>
+            <li>Use mosquito nets and repellents</li>
+            <li>Remove standing water</li>
+            <li>Wear long-sleeved clothing</li>
+            <li>Seek medical attention if symptoms appear</li>
+          </ul>
+        </div>
+      </div>
+      <div class="video-section">
+        <h2>Educational Videos</h2>
+        <div class="videos">
+          <iframe width="320" height="180" src="https://www.youtube.com/embed/3JdWlSF195Y" title="Dengue Awareness" frameborder="0" allowfullscreen></iframe>
+          <iframe width="320" height="180" src="https://www.youtube.com/embed/1wVQG6w2a1E" title="Dengue Prevention" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // Show patient name from localStorage
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    document.getElementById('patientName').textContent = user.fullname || 'Patient';
+
+    // Sidebar active state
+    document.querySelectorAll('.sidebar ul li a').forEach(link => {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar ul li a').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Hospital</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Find a Hospital</h2>
+    <form id="hospitalSearchForm" class="search-bar">
+      <input type="text" id="searchHospitalName" placeholder="Hospital Name">
+      <input type="text" id="searchDistrict" placeholder="District">
+      <input type="text" id="searchCity" placeholder="City">
+      <button type="submit">Search</button>
+      <button type="button" id="nearestBtn">Nearest Hospital</button>
+    </form>
+    <div id="hospitalsList"></div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div id="bookingModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h3>Book a Hospital Seat</h3>
+      <div id="bookingDetails"></div>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Demo hospital data
+    const hospitals = [
+      {
+        name: "Dhaka Medical College Hospital",
+        district: "Dhaka",
+        city: "Dhaka",
+        address: "Secretariat Road, Dhaka",
+        availableSeats: 12
+      },
+      {
+        name: "Square Hospital",
+        district: "Dhaka",
+        city: "Dhaka",
+        address: "18/F, Bir Uttam Qazi Nuruzzaman Sarak, Dhaka",
+        availableSeats: 5
+      },
+      {
+        name: "Rajshahi Medical College Hospital",
+        district: "Rajshahi",
+        city: "Rajshahi",
+        address: "Laxmipur, Rajshahi",
+        availableSeats: 8
+      },
+      {
+        name: "Chittagong Medical College Hospital",
+        district: "Chittagong",
+        city: "Chittagong",
+        address: "Chawkbazar, Chittagong",
+        availableSeats: 10
+      }
+    ];
+
+    function renderHospitals(list) {
+      const container = document.getElementById('hospitalsList');
+      if (!list.length) {
+        container.innerHTML = "<p>No hospitals found.</p>";
+        return;
+      }
+      container.innerHTML = list.map((hosp, idx) => `
+        <div class="doctor-card">
+          <h3>${hosp.name}</h3>
+          <p><strong>District:</strong> ${hosp.district}</p>
+          <p><strong>City:</strong> ${hosp.city}</p>
+          <p><strong>Address:</strong> ${hosp.address}</p>
+          <p><strong>Available Seats:</strong> ${hosp.availableSeats}</p>
+          <button onclick="bookSeat(${idx})">Book a Hospital Seat</button>
+        </div>
+      `).join('');
+    }
+
+    function bookSeat(idx) {
+      const hosp = hospitals[idx];
+      document.getElementById('bookingDetails').innerHTML = `
+        <p><strong>Hospital:</strong> ${hosp.name}</p>
+        <p><strong>District:</strong> ${hosp.district}</p>
+        <p><strong>City:</strong> ${hosp.city}</p>
+        <p><strong>Address:</strong> ${hosp.address}</p>
+        <p><strong>Your seat is booked!</strong></p>
+      `;
+      document.getElementById('bookingModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('bookingModal').style.display = 'none';
+    }
+    document.getElementById('closeModal').onclick = closeModal;
+    window.onclick = function(event) {
+      const modal = document.getElementById('bookingModal');
+      if (event.target === modal) closeModal();
+    };
+
+    // Search/filter logic
+    document.getElementById('hospitalSearchForm').onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('searchHospitalName').value.toLowerCase();
+      const district = document.getElementById('searchDistrict').value.toLowerCase();
+      const city = document.getElementById('searchCity').value.toLowerCase();
+      const filtered = hospitals.filter(hosp =>
+        (name === "" || hosp.name.toLowerCase().includes(name)) &&
+        (district === "" || hosp.district.toLowerCase().includes(district)) &&
+        (city === "" || hosp.city.toLowerCase().includes(city))
+      );
+      renderHospitals(filtered);
+    };
+
+    // Nearest hospital (demo: just show the first one)
+    document.getElementById('nearestBtn').onclick = function() {
+      renderHospitals([hospitals[0]]);
+    };
+
+    // Initial render
+    renderHospitals(hospitals);
+  </script>
+</body>
+</html>

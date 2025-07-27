@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Ambulance</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="doctors.html">👨‍⚕️ Doctors</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button onclick="location.href='hospitals.html'">Find Hospital</button>
+    <button onclick="location.href='ambulance.html'">Find Ambulance</button>
+    <button onclick="location.href='upload-report.html'">Upload Diagnosis Report</button>
+    <button onclick="location.href='symptoms.html'">Symptoms Tracking</button>
+    <button onclick="location.href='heatmap.html'">Heatmap</button>
+  </div>
+
+  <div class="content">
+    <h2>Find Ambulance</h2>
+    <button id="nearestAmbulanceBtn" style="margin-bottom: 1.5rem;">Connect to Nearest Ambulance</button>
+    <div id="ambulanceList"></div>
+  </div>
+
+  <!-- Nearest Ambulance Modal -->
+  <div id="ambulanceModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h3>Nearest Ambulance</h3>
+      <div id="ambulanceDetails"></div>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Demo ambulance data
+    const ambulances = [
+      {
+        hospital: "Dhaka Medical College Hospital",
+        location: "Dhaka",
+        contact: "01711-000001",
+        type: "ICU"
+      },
+      {
+        hospital: "Square Hospital",
+        location: "Dhaka",
+        contact: "01711-000002",
+        type: "General"
+      },
+      {
+        hospital: "Rajshahi Medical College Hospital",
+        location: "Rajshahi",
+        contact: "01711-000003",
+        type: "General"
+      },
+      {
+        hospital: "Chittagong Medical College Hospital",
+        location: "Chittagong",
+        contact: "01711-000004",
+        type: "ICU"
+      }
+    ];
+
+    function renderAmbulances(list) {
+      const container = document.getElementById('ambulanceList');
+      if (!list.length) {
+        container.innerHTML = "<p>No ambulances found.</p>";
+        return;
+      }
+      container.innerHTML = list.map((amb, idx) => `
+        <div class="doctor-card">
+          <h3>${amb.hospital}</h3>
+          <p><strong>Location:</strong> ${amb.location}</p>
+          <p><strong>Contact:</strong> <a href="tel:${amb.contact}">${amb.contact}</a></p>
+          <p><strong>Type:</strong> ${amb.type}</p>
+        </div>
+      `).join('');
+    }
+
+    // Nearest ambulance (demo: just show the first one)
+    document.getElementById('nearestAmbulanceBtn').onclick = function() {
+      const amb = ambulances[0];
+      document.getElementById('ambulanceDetails').innerHTML = `
+        <p><strong>Hospital:</strong> ${amb.hospital}</p>
+        <p><strong>Location:</strong> ${amb.location}</p>
+        <p><strong>Contact:</strong> <a href="tel:${amb.contact}">${amb.contact}</a></p>
+        <p><strong>Type:</strong> ${amb.type}</p>
+        <p><strong>Status:</strong> Connected! Please call the number above.</p>
+      `;
+      document.getElementById('ambulanceModal').style.display = 'flex';
+    };
+
+    function closeModal() {
+      document.getElementById('ambulanceModal').style.display = 'none';
+    }
+    document.getElementById('closeModal').onclick = closeModal;
+    window.onclick = function(event) {
+      const modal = document.getElementById('ambulanceModal');
+      if (event.target === modal) closeModal();
+    };
+
+    // Initial render
+    renderAmbulances(ambulances);
+  </script>
+</body>
+</html>
